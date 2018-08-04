@@ -1,0 +1,52 @@
+Allow Logon
+
+
+asnp Citrix*
+#$Servers=gc U:\Powershell\Test\servers.txt
+$servers=(Get-XAServer).Servername
+$logfile="U:\Powershell\Logon.log"
+Remove-Item "U:\Powershell\Logon.log"
+Function Writelog
+{
+   Param ([string]$logstring)
+
+   Add-content $Logfile -value $logstring
+}
+
+Foreach ($srv in $servers)
+{
+
+Write-Host "Checking Logonmode status on $srv" -f Yellow
+
+$Logon=Get-XAserver -ServerName $srv | Select-Object LogonMode
+
+
+If ($Logon.logonmode -eq "ProhibitNewLogOns")
+{
+
+Write-host $srv, "Server is Probhibit Logon only" -f Red
+Writelog $srv, "Server is Probhibit Logon only"
+}
+
+Elseif($Logon.LogOnMode -eq "ProhibitLogOns")
+{
+
+Write-host $srv,"Server is Probhibit Logon and reconnection" -f Red
+Writelog $srv, "Server is Probhibit Logon and reconnection"
+}
+Elseif($Logon.LogOnMode -eq "ProhibitNewLogOnsUntilRestart")
+{
+
+Write-host $srv,"Server is Probhibit Logon until server restart" -f Red
+Writelog $srv, "Server is Probhibit Logon until server restart"
+}
+
+else
+
+{
+Write-Host $srv,"Server is Allow logon and reconnection" -f Green 
+Writelog $srv, "Server is Allow logon and reconnection"
+}
+}
+
+
