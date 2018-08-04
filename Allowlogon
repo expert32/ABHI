@@ -1,6 +1,3 @@
-Allow Logon
-
-
 asnp Citrix*
 #$Servers=gc U:\Powershell\Test\servers.txt
 $servers=(Get-XAServer).Servername
